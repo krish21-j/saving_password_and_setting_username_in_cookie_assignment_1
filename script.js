@@ -1,30 +1,27 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Function to get the value of a cookie by name
+  let countDisplay = document.getElementById('count-display');
+
+  // Check if the element exists
+  if (!countDisplay) {
+      console.error("Element with id 'count-display' not found!");
+      return;
+  }
+
   function getCookie(name) {
-      let cookieArray = document.cookie.split('; ');
-      let cookie = cookieArray.find(row => row.startsWith(name + '='));
-      return cookie ? parseInt(cookie.split('=')[1]) : null;
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? parseInt(match[2]) : null;
   }
 
-  // Function to set a cookie
-  function setCookie(name, value, daysToExpire) {
+  function setCookie(name, value, days) {
       let date = new Date();
-      date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
-      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
   }
 
-  // Get the current count from the cookie
   let count = getCookie('count');
+  count = (count === null || isNaN(count)) ? 0 : count + 1;
 
-  if (count === null) {
-      count = 0; // Initialize to 0 if cookie does not exist
-  }
+  setCookie('count', count, 7);
 
-  count++; // Increment count
-
-  // Update the cookie with the new count value
-  setCookie('count', count, 7); // Cookie expires in 7 days
-
-  // Display the count on the webpage
-  document.getElementById('count-display').textContent = `Page visits: ${count}`;
+  countDisplay.textContent = `Page views for this session: ${count}`;
 });
